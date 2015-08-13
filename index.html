@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset='UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Neighborhood Map</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+  <body>
+    <header>
+      <div class='search'>
+        <input type='text' name='search-bar'>
+      </div>
+    </header>
+
+    <main class='container'>
+
+      <div class='place-list'>
+        <ul data-bind='foreach: places'>
+          <li data-bind='text: '></li>
+        </ul>
+      </div>
+      <div class='map-section'>
+        <div id='map'></div>
+      </div>
+
+
+    </main>
+
+    <footer>
+    </footer>
+
+
+    <script type="text/javascript" src='js/lib/knockout-3.3.0.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB76u_0lqPeUPSWCyH0Lr5zp7GExa5Rc_Q&libraries=places&callback=initMap"></script>
+    <script type="text/javascript" src='js/app.js'></script>
+
+
+  </body>
+</html>
