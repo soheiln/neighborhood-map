@@ -14,11 +14,14 @@
     </header>
 
     <main class='container'>
-
-      <div class='place-list'>
-        <ul data-bind='foreach: places'>
-          <li data-bind='text: '></li>
+      <div class='current-marker' data-bind='if: currentMarker'>
+        <h2>Current Selection:</h2>
+        <ul>
+          <li>Name: <span data-bind='text: currentMarker().name'></span></li>
+          <li>Address: <span data-bind='text: currentMarker().address'></span></li>
         </ul>
+      </div>
+      <div class='place-list'>
       </div>
       <div class='map-section'>
         <div id='map'></div>

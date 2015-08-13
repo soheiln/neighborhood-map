@@ -1,8 +1,10 @@
+//GLOBAL VARIABLES
+
 var GOOGLE_MAP_API_KEY = 'AIzaSyB76u_0lqPeUPSWCyH0Lr5zp7GExa5Rc_Q';
 
-
-var map;
-var infowindow;
+var map,
+  infowindow,
+  myViewModel;
 
 var sfLocation = {
   lat: 37.7833,
@@ -42,39 +44,38 @@ function initMap() {
     var marker = new google.maps.Marker({
       map: map,
       position: place.geometry.location
-  });
+    });
 
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
-}
-
-
-}
-
-
-var model = function() {
-
+    google.maps.event.addListener(marker, 'click', function() {
+      infowindow.setContent(place.name);
+      infowindow.open(map, this);
+      myViewModel.setCurrentMarker(place);
+    });
+  }
 
 }
 
-
-
+// Knockout.js ViewModel
 var AppViewModel = function() {
   var self = this;
   self.currentLocation = ko.observable(sfLocation);
-  self.map = ko.observable(map);
-  self.places = ko.observableArray();
+  self.currentMarker = ko.observable();
 
-
+  self.setCurrentMarker = function(marker) {
+    console.log('in set currentMarker, name: ' + marker.name + ' @: ' + marker.vicinity);
+    self.currentMarker({
+      name: marker.name,
+      address: marker.vicinity
+    });
+  };
 
 
 }
 
+
+
 //Activate knockout.js
-$(document).load(function() {
-  ko.applyBindings(new AppViewModel());
-});
+myViewModel = new AppViewModel();
+ko.applyBindings(myViewModel);
 
 
