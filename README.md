@@ -1,11 +1,10 @@
 Neighborhood map app - Udacity Front End Nanodegree Project 5
 
 Development Steps:
-1- Get map and marker functionality to work
-(DONE)
++ Get map and marker functionality to work
++ Add list view
++ update markers on map based on location
 
-2- For any markers clicked, show 3rd party info from yelp, wikipedia, etc.
-2.5- Refactor code
-
-3- When map moves, update and show reasobable a number of markers on map
-4- implement search functionality
+- show 3rd party info for current selection
+- Refactor code
+- implement search functionality
