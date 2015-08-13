@@ -36,13 +36,19 @@ var searchPlaces = function() {
   }, placesCallback);
 }
 
-// callBack function that handles the response from Google PlacesService API
+// callBack function that handles the response from Google PlacesService API:
+// - creates marker for each place
+// - appends each place to AppViewModel's places observableArray
 function placesCallback(results, status) {
   console.log('in placesCallback');
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
       console.dir(results[i]);
       createMarker(results[i]);
+      myViewModel.places.push({
+        name: results[i].name,
+        address: results[i].vicinity
+      });
     }
   }
 };
@@ -64,13 +70,14 @@ function createMarker(place) {
   });
 }
 
-
+// =====================
 // Knockout.js ViewModel
+// =====================
 var AppViewModel = function() {
   var self = this;
   self.currentLocation = ko.observable(sfLocation);
   self.currentMarker = ko.observable();
-  self.markers = ko.observableArray();
+  self.places = ko.observableArray();
 
   self.setCurrentMarker = function(marker) {
     console.log('in set currentMarker, name: ' + marker.name + ' @: ' + marker.vicinity);
@@ -79,6 +86,8 @@ var AppViewModel = function() {
       address: marker.vicinity
     });
   };
+
+
 }
 
 

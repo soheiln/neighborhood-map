@@ -21,7 +21,14 @@
           <li>Address: <span data-bind='text: currentMarker().address'></span></li>
         </ul>
       </div>
-      <div class='place-list'>
+      <div class='place-list' data-bind='if: places'>
+        <h2>Places Nearby:</h2>
+        <ul data-bind='foreach: places'>
+          <li>
+            <span data-bind='text: name'></span> -- <span data-bind='text: address'></span>
+          </li>
+
+        </ul>
       </div>
       <div class='map-section'>
         <div id='map'></div>
