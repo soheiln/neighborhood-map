@@ -9,21 +9,22 @@
   <body>
     <header>
       <div class='search'>
-        <input type='text' name='search-bar'>
+        <input type='text' id='search-bar' placeholder='Search...'>
+        <button type='button' id='search-button' onclick='filterResults()'>Search</button>
       </div>
     </header>
 
     <main class='container'>
-      <div class='current-marker' data-bind='if: currentMarker'>
+      <div class='current-location' data-bind='if: currentLocation'>
         <h2>Current Selection:</h2>
         <ul>
-          <li>Name: <span data-bind='text: currentMarker().name'></span></li>
-          <li>Address: <span data-bind='text: currentMarker().address'></span></li>
+          <li>Name: <span data-bind='text: currentLocation().name'></span></li>
+          <li>Address: <span data-bind='text: currentLocation().address'></span></li>
         </ul>
       </div>
-      <div class='place-list' data-bind='if: places'>
+      <div class='place-list' data-bind='if: locations'>
         <h2>Places Nearby:</h2>
-        <ul data-bind='foreach: places'>
+        <ul data-bind='foreach: locations'>
           <li>
             <span data-bind='text: name'></span> -- <span data-bind='text: address'></span>
           </li>
