@@ -85,6 +85,7 @@ var createLocation = function(data) {
   var location = {};
   location.name = data.name;
   location.address = data.vicinity || null;
+  location.visibility = ko.observable(true);
   location.marker = new google.maps.Marker({
     map: map,
     position: data.geometry.location
@@ -122,11 +123,14 @@ var filterResults = function() {
     if( !isLocationMatch(location, exp) ) {
       console.log("location is not match: " + location.name);
       console.dir(location.marker);
-      //remove location from map
+      //hide location from map and list
       location.marker.setMap(null);
-
-      //remove location from list
-      myViewModel.locations.remove(location);
+      location.visibility(false);
+    }
+    else {
+      //show location on map and list
+      location.marker.setMap(map);
+      location.visibility(true);
     }
   }
   console.log('locations.length: ' + myViewModel.locations().length);
