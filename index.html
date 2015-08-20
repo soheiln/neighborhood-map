@@ -26,7 +26,8 @@
         <h2>Places Nearby:</h2>
         <ul data-bind='foreach: locations'>
           <li>
-            <span data-bind='text: name'></span> -- <span data-bind='text: address'></span>
+            <span data-bind='text: name, click: $root.setCurrentLocation'></span> --
+            <span data-bind='text: address, click: $root.setCurrentLocation'></span>
           </li>
         </ul>
       </div>
