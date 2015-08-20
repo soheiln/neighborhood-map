@@ -153,11 +153,15 @@ var AppViewModel = function() {
 
   self.setCurrentLocation = function(location) {
     console.log('in set currentLocation, name: ' + location.name + ' @: ' + location.vicinity);
-    self.currentLocation({
-      name: location.name,
-      address: location.address,
-      marker: location.marker
-    });
+
+    //if applicable, remove animation for previously selected location
+    if( self.currentLocation() ) {
+      self.currentLocation().marker.setAnimation(null);
+    }
+
+    //add animation for newly selected location
+    location.marker.setAnimation(google.maps.Animation.BOUNCE);
+    self.currentLocation(location);
   };
 
 
