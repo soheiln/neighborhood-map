@@ -44,7 +44,7 @@ var searchPlaces = function() {
   //searchers for places in map's visible bounds
   service.nearbySearch({
     bounds: map.getBounds(),
-    types: ['store']
+    types: ['restaurant']
   }, placesCallback);
 }
 
@@ -64,6 +64,7 @@ function placesCallback(results, status) {
       createLocation(results[i]);
     }
   }
+  //TODO: else for error handling
 };
 
 
@@ -82,10 +83,14 @@ var clearLocations = function() {
 // creates a location object out of a Google.maps.Placesservice response object
 //TODO: add documentation
 var createLocation = function(data) {
+  console.log("in create location, data: " + data.geometry.location.lat() + "," + data.geometry.location.lng()); //TOOD remove
+  console.dir(data); //TODO remove
   var location = {};
   location.name = data.name;
   location.address = data.vicinity || null;
   location.visibility = ko.observable(true);
+  location.lat = data.geometry.location.lat();
+  location.lng = data.geometry.location.lng();
   location.marker = new google.maps.Marker({
     map: map,
     position: data.geometry.location
@@ -94,7 +99,7 @@ var createLocation = function(data) {
 
   //setting click listener for the marker
   google.maps.event.addListener(location.marker, 'click', function() {
-    infowindow.setContent(location.name);
+    infowindow.setContent(location.name); //TODO: add yelp rating/hours to infoWindow
     infowindow.open(map, this);
     myViewModel.setCurrentLocation(location);
   });
@@ -166,6 +171,47 @@ var AppViewModel = function() {
     //add animation for newly selected location
     location.marker.setAnimation(google.maps.Animation.BOUNCE);
     self.currentLocation(location);
+
+    //TODO: complete and test
+    //make ajax call to foursquare api to get info about business
+    var url_base = "https://api.foursquare.com/v2/venues/search?client_id=IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF&client_secret=15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB&v=20130815&limit=10";
+    var ll = "&ll=" + location.lat + "," + location.lng;
+    var query = "&query=" + location.name;
+    var ajax_url = url_base + ll + query;
+
+    //four square ajax success callback
+    //TODO: more documentation
+    var fs_ajax_success = function(xhr) {
+      // console.log("four square ajax success");
+      // console.dir(myViewModel.currentLocation()); //TODO:remove
+      // console.dir(xhr);
+      var venues = xhr.response.venues;
+      var venue = venues[0]; //error handling
+
+      //setting locations info from four square API result
+      location.url = venue.url;
+      location.address = venue.location.address;
+      location.category = venue.categories[0].name || "";
+
+      location.infoWindowContent = "html goes here."; //TODO complete
+
+      console.log(
+        "website: " + venue.url +
+        "\naddress: " + venue.location.address +
+        "\ncategory: " + venue.categories[0].name
+        );
+    };
+
+    $.ajax({
+      context: this,
+      url: ajax_url,
+      success: fs_ajax_success,
+      error: function() { //error callBack
+        console.log("four square ajax error");
+      }
+    });
+
+
   };
 
 
@@ -176,4 +222,25 @@ var AppViewModel = function() {
 myViewModel = new AppViewModel();
 ko.applyBindings(myViewModel);
 
+
+
+
+/*
+four square api
+
+Client id
+IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF
+Client secret
+15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB
+
+https://api.foursquare.com/v2/venues/search
+
+
+NEEDS ll (lat,long)
+https://api.foursquare.com/v2/venues/search?client_id=IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF&client_secret=15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB&v=20130815&ll=40.7,-74&query=sushi&limit=10
+
+
+jquery ajax call:
+$.ajax(url);
+*/
 
