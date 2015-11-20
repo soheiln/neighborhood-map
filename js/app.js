@@ -24,6 +24,9 @@ function initMap() {
   // when the bounds change
   //TODO: rate limit by combining this with mouseup event
   map.addListener('bounds_changed', function() {
+    if(infowindow) {
+      infowindow.close();
+    }
     clearLocations();
     searchPlaces();
   });
@@ -56,7 +59,6 @@ var searchPlaces = function() {
 function placesCallback(results, status) {
   console.log('in placesCallback');
   if (status === google.maps.places.PlacesServiceStatus.OK) {
-    //myViewModel.locations([]); //clear existing locations
     clearLocations();
     for (var i = 0; i < results.length; i++) {
       console.log('results[i]');
@@ -83,8 +85,6 @@ var clearLocations = function() {
 // creates a location object out of a Google.maps.Placesservice response object
 //TODO: add documentation
 var createLocation = function(data) {
-  console.log("in create location, data: " + data.geometry.location.lat() + "," + data.geometry.location.lng()); //TOOD remove
-  console.dir(data); //TODO remove
   var location = {};
   location.name = data.name;
   location.address = data.vicinity || null;
@@ -99,8 +99,6 @@ var createLocation = function(data) {
 
   //setting click listener for the marker
   google.maps.event.addListener(location.marker, 'click', function() {
-    infowindow.setContent(location.name); //TODO: add yelp rating/hours to infoWindow
-    infowindow.open(map, this);
     myViewModel.setCurrentLocation(location);
   });
 }
@@ -117,8 +115,6 @@ var clearLocations = function() {
 var filterResults = function() {
   //get search expression
   var exp = $('#search-bar').val();
-  console.log('exp: ' + exp);
-  console.log('locations.length: ' + myViewModel.locations().length);
 
   //loop through locations and remove matching locations from map and list
   for (var i = myViewModel.locations().length-1; i >= 0; i--) {
@@ -163,28 +159,36 @@ var AppViewModel = function() {
   self.setCurrentLocation = function(location) {
     console.log('in set currentLocation, name: ' + location.name + ' @: ' + location.vicinity);
 
-    //if applicable, remove animation for previously selected location
-    if( self.currentLocation() ) {
+    if( self.currentLocation() ) { //stop previous animation
       self.currentLocation().marker.setAnimation(null);
+    }
+
+    if(infowindow) { //close previous infowindow
+      infowindow.close();
     }
 
     //add animation for newly selected location
     location.marker.setAnimation(google.maps.Animation.BOUNCE);
     self.currentLocation(location);
 
-    //TODO: complete and test
+    //TODO: error handling
     //make ajax call to foursquare api to get info about business
     var url_base = "https://api.foursquare.com/v2/venues/search?client_id=IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF&client_secret=15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB&v=20130815&limit=10";
     var ll = "&ll=" + location.lat + "," + location.lng;
     var query = "&query=" + location.name;
     var ajax_url = url_base + ll + query;
 
+    //set initial infoWindow content until foursquare data is loaded
+    infowindow.setContent(location.name);
+    infowindow.setOptions({
+      disableAutoPan: true
+    });
+    infowindow.open(map, location.marker);
+
+
     //four square ajax success callback
     //TODO: more documentation
     var fs_ajax_success = function(xhr) {
-      // console.log("four square ajax success");
-      // console.dir(myViewModel.currentLocation()); //TODO:remove
-      // console.dir(xhr);
       var venues = xhr.response.venues;
       var venue = venues[0]; //error handling
 
@@ -193,15 +197,19 @@ var AppViewModel = function() {
       location.address = venue.location.address;
       location.category = venue.categories[0].name || "";
 
-      location.infoWindowContent = "html goes here."; //TODO complete
 
-      console.log(
-        "website: " + venue.url +
-        "\naddress: " + venue.location.address +
-        "\ncategory: " + venue.categories[0].name
-        );
+      //reset infoWindow with more info from from foursquare api when loaded
+      location.infoWindowContent = "<div id='infoWindow'>" +
+        "<h3>" + location.name + "</h3>" +
+        "<p>" + location.address + "</p>" +
+        "<p>" + location.category + "</p>" +
+        "<a href='" + location.url + "'>" + location.url + "'</a>" +
+        "</div>";
+      infowindow.setContent(location.infoWindowContent);
+      infowindow.open(map, location.marker);
     };
 
+    //ajax call to get additional venue data from foursquare
     $.ajax({
       context: this,
       url: ajax_url,
