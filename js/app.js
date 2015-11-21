@@ -20,17 +20,6 @@ function initMap() {
     zoom: 14
   });
 
-  // adding listener for bounds_changed, so that markers are updated
-  // when the bounds change
-  //TODO: rate limit by combining this with mouseup event
-  // map.addListener('bounds_changed', function() {
-  //   if(infowindow) {
-  //     infowindow.close();
-  //   }
-  //   clearLocations();
-  //   searchPlaces();
-  // }); //TODO: check if this is needed in specs
-
   google.maps.event.addListenerOnce(map, 'idle', function(){
     // do something only the first time the map is loaded
     searchPlaces();
@@ -64,7 +53,9 @@ function placesCallback(results, status) {
       createLocation(results[i]);
     }
   }
-  //TODO: else for error handling
+  else {
+    window.prompt('Sorry, there was an error with your place search. Please try again!')
+  }
 };
 
 
@@ -80,9 +71,11 @@ var clearLocations = function() {
 }
 
 
-// creates a location object out of a Google.maps.Placesservice response object
-//TODO: add documentation
-var createLocation = function(data) {
+/*
+ * creates a location object out of a Google.maps.Placesservice
+ * response object
+ */
+ var createLocation = function(data) {
   var location = {};
   location.name = data.name;
   location.address = data.vicinity || null;
@@ -133,7 +126,6 @@ var filterResults = function() {
     }
   }
   console.log('locations.length: ' + myViewModel.locations().length);
-
 }
 
 
@@ -144,6 +136,15 @@ var isLocationMatch = function(location, exp) {
   }
   return false;
 }
+
+
+//specifying map div heigh on page load
+$(window).resize(function () {
+    var h = $(window).height(),
+        offsetTop = 60; // Calculate the top offset
+
+    $('#map').css('height', (h - offsetTop));
+}).resize();
 
 
 // =====================
@@ -169,7 +170,6 @@ var AppViewModel = function() {
     location.marker.setAnimation(google.maps.Animation.BOUNCE);
     self.currentLocation(location);
 
-    //TODO: error handling
     //make ajax call to foursquare api to get info about business
     var url_base = "https://api.foursquare.com/v2/venues/search?client_id=IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF&client_secret=15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB&v=20130815&limit=10";
     var ll = "&ll=" + location.lat + "," + location.lng;
@@ -185,7 +185,6 @@ var AppViewModel = function() {
 
 
     //four square ajax success callback
-    //TODO: more documentation
     var fs_ajax_success = function(xhr) {
       var venues = xhr.response.venues;
       var venue = venues[0]; //error handling
@@ -213,7 +212,7 @@ var AppViewModel = function() {
       url: ajax_url,
       success: fs_ajax_success,
       error: function() { //error callBack
-        console.log("four square ajax error");
+        window.prompt('Sorry, there was an error collecting information about this restaurant.')
       }
     });
   };
@@ -222,13 +221,3 @@ var AppViewModel = function() {
 //Activating knockout.js
 myViewModel = new AppViewModel();
 ko.applyBindings(myViewModel);
-
-
-//TODO: put in correct place
-//TODO: remove hardcoded offsetTop
-$(window).resize(function () {
-    var h = $(window).height(),
-        offsetTop = 60; // Calculate the top offset
-
-    $('#map').css('height', (h - offsetTop));
-}).resize();
