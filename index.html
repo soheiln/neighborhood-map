@@ -2,41 +2,44 @@
 <html>
   <head>
     <meta charset='UTF-8'>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Neighborhood Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Neighborhood Restaurant Map</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
   </head>
-  <body>
-    <header>
-      <div class='search'>
-        <input type='text' id='search-bar' placeholder='Search...' data-bind='event: {input: filterResults()}'>
-        <button type='button' id='search-button' onclick='filterResults()'>Search</button>
+
+  <body class="container-fluid">
+    <header class='row'>
+      <div class='col-xs-12 centered'>
+        <h2>Restaurant Finder</h2>
       </div>
+      <div class="col-xs-1"></div>
+      <div class='search col-xs-6'>
+        <input type='text' id='search-bar' class='container' placeholder='Type to filter results ...' data-bind='event: {input: filterResults()}'>
+      </div>
+      <div class='col-xs-4'>
+        <button type='button' id='search-button' onclick='searchPlaces()'>Redo Search on Map</button>
+      </div>
+      <div class="col-xs-1"></div>
     </header>
 
-    <main class='container'>
-      <div class='current-location' data-bind='if: currentLocation'>
-        <h2>Current Selection:</h2>
-        <ul>
-          <li>Name: <span data-bind='text: currentLocation().name'></span></li>
-          <li>Address: <span data-bind='text: currentLocation().address'></span></li>
-        </ul>
-      </div>
-      <div class='place-list' data-bind='if: locations'>
-        <h2>Places Nearby:</h2>
+    <main class='row'>
+      <div class='place-list col-xs-12 col-md-4' data-bind='if: locations'>
+        <h3>Restaurants Nearby:</h3>
         <ul data-bind='foreach: locations'>
-          <li data-bind='visible: visibility'>
-            <span data-bind='text: name, click: $root.setCurrentLocation'></span> --
-            <span data-bind='text: address, click: $root.setCurrentLocation'></span>
+          <li class='location-item' data-bind='visible: visibility'>
+            <span data-bind='text: name, click: $root.setCurrentLocation'></span>
+            <!-- //todo: remove -->
+            <!-- <span data-bind='text: address, click: $root.setCurrentLocation'></span> -->
           </li>
         </ul>
       </div>
-      <div class='map-section'>
+      <div class='map-section col-xs-12 col-md-8' style='border-color: black, border-width: 1px'>
         <div id='map'></div>
       </div>
     </main>
 
-    <footer>
+    <footer class='row'>
     </footer>
 
     <script type="text/javascript" src='js/lib/knockout-3.3.0.js'></script>

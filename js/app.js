@@ -23,13 +23,13 @@ function initMap() {
   // adding listener for bounds_changed, so that markers are updated
   // when the bounds change
   //TODO: rate limit by combining this with mouseup event
-  map.addListener('bounds_changed', function() {
-    if(infowindow) {
-      infowindow.close();
-    }
-    clearLocations();
-    searchPlaces();
-  });
+  // map.addListener('bounds_changed', function() {
+  //   if(infowindow) {
+  //     infowindow.close();
+  //   }
+  //   clearLocations();
+  //   searchPlaces();
+  // }); //TODO: check if this is needed in specs
 
   google.maps.event.addListenerOnce(map, 'idle', function(){
     // do something only the first time the map is loaded
@@ -61,8 +61,6 @@ function placesCallback(results, status) {
   if (status === google.maps.places.PlacesServiceStatus.OK) {
     clearLocations();
     for (var i = 0; i < results.length; i++) {
-      console.log('results[i]');
-      console.dir(results[i]);
       createLocation(results[i]);
     }
   }
@@ -218,37 +216,19 @@ var AppViewModel = function() {
         console.log("four square ajax error");
       }
     });
-
-
   };
-
-
 }
-
 
 //Activating knockout.js
 myViewModel = new AppViewModel();
 ko.applyBindings(myViewModel);
 
 
+//TODO: put in correct place
+//TODO: remove hardcoded offsetTop
+$(window).resize(function () {
+    var h = $(window).height(),
+        offsetTop = 60; // Calculate the top offset
 
-
-/*
-four square api
-
-Client id
-IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF
-Client secret
-15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB
-
-https://api.foursquare.com/v2/venues/search
-
-
-NEEDS ll (lat,long)
-https://api.foursquare.com/v2/venues/search?client_id=IWJUPAUNFKW5W1W5ZH2Y5L2YT1D2VAI5LR2JT0AOCANSMMOF&client_secret=15XOTXLRTOZRBTWMN13KDGXAWYABLE5LCMD4I0IFA34V4KWB&v=20130815&ll=40.7,-74&query=sushi&limit=10
-
-
-jquery ajax call:
-$.ajax(url);
-*/
-
+    $('#map').css('height', (h - offsetTop));
+}).resize();
