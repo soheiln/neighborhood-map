@@ -1,6 +1,5 @@
 //GLOBAL VARIABLES
 
-var GOOGLE_MAP_API_KEY = 'AIzaSyB76u_0lqPeUPSWCyH0Lr5zp7GExa5Rc_Q';
 var map,
   infowindow,
   myViewModel;
@@ -38,7 +37,7 @@ var searchPlaces = function() {
     bounds: map.getBounds(),
     types: ['restaurant']
   }, placesCallback);
-}
+};
 
 
 // callBack function that handles the response from Google PlacesService API:
@@ -54,7 +53,7 @@ function placesCallback(results, status) {
     }
   }
   else {
-    window.prompt('Sorry, there was an error with your place search. Please try again!')
+    window.alert('Sorry, there was an error with your place search. Please try again!')
   }
 };
 
@@ -65,10 +64,9 @@ var clearLocations = function() {
     //remove location from map
     myViewModel.locations()[i].marker.setMap(null);
   }
-
   //empty the locations array
   myViewModel.locations([]);
-}
+};
 
 
 /*
@@ -92,15 +90,8 @@ var clearLocations = function() {
   google.maps.event.addListener(location.marker, 'click', function() {
     myViewModel.setCurrentLocation(location);
   });
-}
+};
 
-//clears all locations
-var clearLocations = function() {
-  for (var i = myViewModel.locations().length-1; i >= 0; i--) {
-    myViewModel.locations()[i].marker.setMap(null);
-  }
-  myViewModel.locations([]);
-}
 
 // filters existing markers based on search term
 var filterResults = function() {
@@ -126,7 +117,7 @@ var filterResults = function() {
     }
   }
   console.log('locations.length: ' + myViewModel.locations().length);
-}
+};
 
 
 // checks if location matches the input expression
@@ -135,7 +126,7 @@ var isLocationMatch = function(location, exp) {
     return true;
   }
   return false;
-}
+};
 
 
 //specifying map div heigh on page load
@@ -186,13 +177,17 @@ var AppViewModel = function() {
 
     //four square ajax success callback
     var fs_ajax_success = function(xhr) {
-      var venues = xhr.response.venues;
-      var venue = venues[0]; //error handling
 
-      //setting locations info from four square API result
-      location.url = venue.url;
-      location.address = venue.location.address;
-      location.category = venue.categories[0].name || "";
+      var venues = xhr.response.venues;
+
+      if(venues[0]){
+        var venue = venues[0]; //error handling
+
+        //setting locations info from four square API result
+        location.url = venue.url || "";
+        location.address = venue.location.address || "";
+        location.category = venue.categories[0].name || "";
+      }
 
 
       //reset infoWindow with more info from from foursquare api when loaded
@@ -212,11 +207,11 @@ var AppViewModel = function() {
       url: ajax_url,
       success: fs_ajax_success,
       error: function() { //error callBack
-        window.prompt('Sorry, there was an error collecting information about this restaurant.')
+        window.alert('Sorry, there was an error collecting information about this restaurant.');
       }
     });
   };
-}
+};
 
 //Activating knockout.js
 myViewModel = new AppViewModel();
