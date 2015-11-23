@@ -96,27 +96,22 @@ var clearLocations = function() {
 // filters existing markers based on search term
 var filterResults = function() {
   //get search expression
-  var exp = $('#search-bar').val();
+  var searchInput = $('#search-bar').val();
 
-  //loop through locations and remove matching locations from map and list
-  for (var i = myViewModel.locations().length-1; i >= 0; i--) {
-    var location = myViewModel.locations()[i];
-    console.log('location:');
-    console.dir(location);
-    if( !isLocationMatch(location, exp) ) {
-      console.log("location is not match: " + location.name);
-      console.dir(location.marker);
+  ko.utils.arrayForEach(myViewModel.locations(), function(location) {
+    if(location.name.toLowerCase().indexOf(searchInput) == -1) {
+      console.log('not a match');
       //hide location from map and list
       location.marker.setMap(null);
       location.visibility(false);
     }
-    else {
+    else{
       //show location on map and list
       location.marker.setMap(map);
       location.visibility(true);
     }
-  }
-  console.log('locations.length: ' + myViewModel.locations().length);
+  });
+
 };
 
 
@@ -181,8 +176,7 @@ var AppViewModel = function() {
       var venues = xhr.response.venues;
 
       if(venues[0]){
-        var venue = venues[0]; //error handling
-
+        var venue = venues[0];
         //setting locations info from four square API result
         location.url = venue.url || "";
         location.address = venue.location.address || "";
