@@ -158,6 +158,7 @@ var AppViewModel = function() {
     }
 
     //add animation for newly selected location
+    map.setCenter(location.marker.getPosition());
     location.marker.setAnimation(google.maps.Animation.BOUNCE);
     self.currentLocation(location);
 
