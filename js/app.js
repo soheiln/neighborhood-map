@@ -37,6 +37,9 @@ var searchPlaces = function() {
     bounds: map.getBounds(),
     types: ['restaurant']
   }, placesCallback);
+
+  //clear the search bar input
+  $('#search-bar').val('');
 };
 
 
@@ -95,8 +98,10 @@ var clearLocations = function() {
 
 // filters existing markers based on search term
 var filterResults = function() {
+  console.log('in filterResults..')
   //get search expression
   var searchInput = $('#search-bar').val();
+  console.log('searchInput=' + searchInput);
 
   ko.utils.arrayForEach(myViewModel.locations(), function(location) {
     if(location.name.toLowerCase().indexOf(searchInput) == -1) {
@@ -210,3 +215,19 @@ var AppViewModel = function() {
 //Activating knockout.js
 myViewModel = new AppViewModel();
 ko.applyBindings(myViewModel);
+
+
+// ============================
+// Initializing slidebar menu
+// ============================
+var slideout = new Slideout({
+  'panel': document.getElementById('panel'),
+  'menu': document.getElementById('menu'),
+  'padding': 256,
+  'tolerance': 70
+});
+
+// Toggle button
+document.querySelector('.toggle-button').addEventListener('click', function() {
+  slideout.toggle();
+});

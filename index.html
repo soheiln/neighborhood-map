@@ -9,37 +9,45 @@
   </head>
 
   <body class="container-fluid">
-    <header class='row'>
-      <div class='col-xs-12 centered'>
-        <h2>Restaurant Finder</h2>
-      </div>
-      <div class="col-xs-1"></div>
-      <div class='search col-xs-6'>
+    <div id='panel'>
+      <header class='row'>
+        <div class='col-xs-1'>
+          <button class="toggle-button">☰</button>
+        </div>
+        <div class='col-xs-7'>
+          <h3>Restaurant Finder</h3>
+        </div>
+        <div class='col-xs-3'>
+          <button type='button' id='search-button' onclick='searchPlaces()'>Redo Search on Map</button>
+        </div>
+        <div class='col-xs-1'>
+        </div>
+      </header>
+
+      <main class='row'>
+        <div class='map-section col-xs-12' style='border-color: black, border-width: 1px'>
+          <div id='map'></div>
+        </div>
+      </main>
+
+      <footer class='row'>
+      </footer>
+    </div>
+
+    <nav id='menu' class='place-list col-xs-12 col-md-4' data-bind='if: locations'>
+      <h3>Restaurants Nearby:</h3>
+      <div class='search'>
         <input type='text' id='search-bar' class='container' placeholder='Type to filter results ...' data-bind='event: {input: filterResults()}'>
       </div>
-      <div class='col-xs-4'>
-        <button type='button' id='search-button' onclick='searchPlaces()'>Redo Search on Map</button>
-      </div>
-      <div class="col-xs-1"></div>
-    </header>
 
-    <main class='row'>
-      <div class='place-list col-xs-12 col-md-4' data-bind='if: locations'>
-        <h3>Restaurants Nearby:</h3>
-        <ul data-bind='foreach: locations'>
-          <li class='location-item' data-bind='visible: visibility'>
-            <span data-bind='text: name, click: $root.setCurrentLocation'></span>
-          </li>
-        </ul>
-      </div>
-      <div class='map-section col-xs-12 col-md-8' style='border-color: black, border-width: 1px'>
-        <div id='map'></div>
-      </div>
-    </main>
+      <ul data-bind='foreach: locations'>
+        <li class='location-item' data-bind='visible: visibility'>
+          <span data-bind='text: name, click: $root.setCurrentLocation'></span>
+        </li>
+      </ul>
+    </nav>
 
-    <footer class='row'>
-    </footer>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/0.1.11/slideout.min.js"></script>
     <script type="text/javascript" src='js/lib/knockout-3.3.0.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src='js/app.js'></script>
