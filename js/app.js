@@ -201,14 +201,22 @@ var AppViewModel = function() {
       infowindow.open(map, location.marker);
     };
 
+    //four square ajax error callback
+    var fs_ajax_error = function(xhr) {
+      //reset infoWindow with ajax error message
+      location.infoWindowContent = "<div id='infoWindow'>" +
+        "<p> Unfortunately we were not able to load additional info at this point. </p>" +
+        "</div>";
+      infowindow.setContent(location.infoWindowContent);
+      infowindow.open(map, location.marker);
+    };
+
     //ajax call to get additional venue data from foursquare
     $.ajax({
       context: this,
       url: ajax_url,
       success: fs_ajax_success,
-      error: function() { //error callBack
-        window.alert('Sorry, there was an error collecting information about this restaurant.');
-      }
+      error: fs_ajax_error
     });
   };
 };
